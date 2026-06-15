@@ -126,10 +126,21 @@ const DOMAIN_RULES = {
   'reddit.com': ['utm_source', 'utm_medium', 'utm_name', 'utm_content', 'utm_term', 'ref_source', 'ref_campaign'],
 };
 
+// Prefixes to strip in aggressive mode (any param starting with these)
+const AGGRESSIVE_PREFIXES = [
+  'utm_', 'mtm_', 'pk_', 'hsa_', '_hs',
+  'gclid', 'gbraid', 'wbraid', 'gad_',
+];
+
+function isAggressiveMatch(key) {
+  const lower = key.toLowerCase();
+  return AGGRESSIVE_PREFIXES.some((prefix) => lower.startsWith(prefix));
+}
+
 /**
  * Clean a URL and return both the cleaned URL and list of removed param names.
  */
-export function cleanUrlDetailed(rawUrl) {
+export function cleanUrlDetailed(rawUrl, aggressive = false) {
   let url = rawUrl.trim();
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     url = 'https://' + url;
@@ -150,7 +161,7 @@ export function cleanUrlDetailed(rawUrl) {
   const toDelete = [];
   for (const [key] of params) {
     const lower = key.toLowerCase();
-    if (TRACKING_PARAMS.has(lower) || domainParams.includes(lower)) {
+    if (TRACKING_PARAMS.has(lower) || domainParams.includes(lower) || (aggressive && isAggressiveMatch(key))) {
       toDelete.push(key);
       removed.push(key);
     }
@@ -188,8 +199,8 @@ export function cleanUrlDetailed(rawUrl) {
 }
 
 /** Simple wrapper that just returns the cleaned URL string. */
-export function cleanUrl(rawUrl) {
-  return cleanUrlDetailed(rawUrl).cleaned;
+export function cleanUrl(rawUrl, aggressive = false) {
+  return cleanUrlDetailed(rawUrl, aggressive).cleaned;
 }
 
 export function extractUrls(text) {

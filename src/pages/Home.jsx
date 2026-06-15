@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link2, Sparkles, Copy, Share2, Clock, Settings, Home, CheckCheck, ShieldCheck } from 'lucide-react';
+import { Link2, Sparkles, Copy, Share2, Clock, Settings, Home, CheckCheck, ShieldCheck, Sun, Moon, X, Zap } from 'lucide-react';
 import { cleanUrl, cleanUrlDetailed, extractUrls, TRACKING_PARAMS } from '@/lib/urlCleaner';
 import { toast } from 'sonner';
 import CleanResultModal from '@/components/CleanResultModal';
@@ -10,6 +10,9 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState('home');
   const [autoCopy, setAutoCopy] = useState(true);
   const [oneTapClean, setOneTapClean] = useState(true);
+  const [aggressiveMode, setAggressiveMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const [modalResult, setModalResult] = useState(null);
 
@@ -20,6 +23,12 @@ export default function HomePage() {
     if (ac !== null) setAutoCopy(ac === 'true');
     const otc = localStorage.getItem('b4track_onetap');
     if (otc !== null) setOneTapClean(otc === 'true');
+    const ag = localStorage.getItem('b4track_aggressive');
+    if (ag !== null) setAggressiveMode(ag === 'true');
+    const dm = localStorage.getItem('b4track_darkmode');
+    const isDark = dm !== null ? dm === 'true' : true;
+    setDarkMode(isDark);
+    document.documentElement.classList.toggle('dark', isDark);
 
     // Handle Web Share Target: ?share_url=...
     const params = new URLSearchParams(window.location.search);
@@ -27,7 +36,7 @@ export default function HomePage() {
     if (shareUrl) {
       const urls = extractUrls(shareUrl);
       const target = urls.length > 0 ? urls[0] : shareUrl;
-      const { cleaned, removed } = cleanUrlDetailed(target);
+      const { cleaned, removed } = cleanUrlDetailed(target, aggressiveMode);
       const entry = { id: Date.now(), original: target, cleaned, removed: removed || [], timestamp: new Date().toISOString() };
       const saved2 = localStorage.getItem('b4track_history');
       const hist = saved2 ? JSON.parse(saved2) : [];
@@ -44,9 +53,15 @@ export default function HomePage() {
     localStorage.setItem('b4track_history', JSON.stringify(newHistory));
   };
 
+  const toggleDarkMode = (val) => {
+    setDarkMode(val);
+    localStorage.setItem('b4track_darkmode', val);
+    document.documentElement.classList.toggle('dark', val);
+  };
+
   const handleClean = () => {
     if (!inputUrl.trim()) { toast.error('Please enter a URL first'); return; }
-    const { cleaned, removed } = cleanUrlDetailed(inputUrl.trim());
+    const { cleaned, removed } = cleanUrlDetailed(inputUrl.trim(), aggressiveMode);
     const entry = { id: Date.now(), original: inputUrl.trim(), cleaned, removed: removed || [], timestamp: new Date().toISOString() };
     const newHistory = [entry, ...history].slice(0, 50);
     saveHistory(newHistory);
@@ -61,7 +76,7 @@ export default function HomePage() {
       setInputUrl(text);
       if (oneTapClean && text.trim()) {
         setTimeout(() => {
-          const { cleaned, removed } = cleanUrlDetailed(text.trim());
+          const { cleaned, removed } = cleanUrlDetailed(text.trim(), aggressiveMode);
           const entry = { id: Date.now(), original: text.trim(), cleaned, removed: removed || [], timestamp: new Date().toISOString() };
           const newHistory = [entry, ...history].slice(0, 50);
           saveHistory(newHistory);
@@ -87,7 +102,7 @@ export default function HomePage() {
     if (urls.length === 0) { toast.error('No URLs found in clipboard'); return; }
 
     const entries = urls.map((u) => {
-      const { cleaned, removed } = cleanUrlDetailed(u);
+      const { cleaned, removed } = cleanUrlDetailed(u, aggressiveMode);
       return { id: Date.now() + Math.random(), original: u, cleaned, removed: removed || [], timestamp: new Date().toISOString() };
     });
 
@@ -129,10 +144,68 @@ export default function HomePage() {
   const totalTrackersDodged = history.reduce((sum, item) => sum + (item.removed?.length || 0), 0);
 
   return (
-    <div className="min-h-screen bg-[#0d0d1a] text-white flex flex-col max-w-md mx-auto relative">
+    <div className={`min-h-screen ${darkMode ? 'bg-[#0d0d1a] text-white' : 'bg-gray-50 text-gray-900'} flex flex-col max-w-md mx-auto relative`}>
+
+      {/* Hamburger Drawer Overlay */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
+          <div className={`relative w-64 h-full ${darkMode ? 'bg-[#12121f] border-r border-[#2a2a4a]' : 'bg-white border-r border-gray-200'} flex flex-col p-6 pt-14 z-10`}>
+            <button onClick={() => setMenuOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-black tracking-wider mb-8">
+              <span className={darkMode ? 'text-white' : 'text-gray-900'}>B4</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">TRACK</span>
+            </h2>
+            <nav className="space-y-1 flex-1">
+              {[
+                { icon: <Home className="w-5 h-5" />, label: 'Home', tab: 'home' },
+                { icon: <Clock className="w-5 h-5" />, label: 'History', tab: 'history' },
+                { icon: <Settings className="w-5 h-5" />, label: 'Settings', tab: 'settings' },
+              ].map(({ icon, label, tab }) => (
+                <button
+                  key={tab}
+                  onClick={() => { setActiveTab(tab); setMenuOpen(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                    activeTab === tab
+                      ? 'bg-gradient-to-r from-violet-600/20 to-cyan-600/20 text-cyan-400 border border-violet-700/30'
+                      : darkMode ? 'text-gray-400 hover:text-white hover:bg-white/5' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  {icon}{label}
+                </button>
+              ))}
+            </nav>
+            {/* Light / Dark toggle — only in hamburger menu */}
+            <div className={`pt-4 border-t ${darkMode ? 'border-[#2a2a4a]' : 'border-gray-200'}`}>
+              <p className={`text-xs font-medium mb-3 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>APPEARANCE</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {darkMode ? <Moon className="w-4 h-4 text-violet-400" /> : <Sun className="w-4 h-4 text-yellow-500" />}
+                  <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{darkMode ? 'Dark Mode' : 'Light Mode'}</span>
+                </div>
+                <button
+                  onClick={() => toggleDarkMode(!darkMode)}
+                  className={`w-12 h-6 rounded-full transition-all duration-300 relative ${darkMode ? 'bg-gradient-to-r from-violet-600 to-cyan-500' : 'bg-gray-300'}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-300 ${darkMode ? 'left-6' : 'left-0.5'}`} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-10 pb-4">
-        <div className="w-10" />
+        <button className="p-2" onClick={() => setMenuOpen(true)}>
+          <div className="space-y-1.5">
+            <span className={`block w-6 h-0.5 ${darkMode ? 'bg-white' : 'bg-gray-800'}`}></span>
+            <span className={`block w-6 h-0.5 ${darkMode ? 'bg-white' : 'bg-gray-800'}`}></span>
+            <span className={`block w-6 h-0.5 ${darkMode ? 'bg-white' : 'bg-gray-800'}`}></span>
+          </div>
+        </button>
         <h1 className="text-2xl font-black tracking-wider">
           <span className="text-white">B4</span>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">TRACK</span>
@@ -294,6 +367,15 @@ export default function HomePage() {
                 description="Clean link as soon as you paste"
                 value={oneTapClean}
                 onChange={(v) => { setOneTapClean(v); localStorage.setItem('b4track_onetap', v); }}
+              />
+              <div className="h-px bg-[#2a2a4a]" />
+              <SettingRow
+                icon="🛡️"
+                iconBg="bg-red-600/20"
+                title="Aggressive Mode"
+                description="Also strips entire param prefixes: utm_, mtm_, pk_, hsa_, _hs, gclid, gbraid, wbraid, gad_"
+                value={aggressiveMode}
+                onChange={(v) => { setAggressiveMode(v); localStorage.setItem('b4track_aggressive', v); }}
               />
             </div>
 
