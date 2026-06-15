@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link2, Sparkles, Copy, Share2, Trash2, Clock, Settings, Home, CheckCheck } from 'lucide-react';
-import { cleanUrl } from '@/lib/urlCleaner';
+import { Link2, Sparkles, Copy, Share2, Clock, Settings, Home, CheckCheck, ShieldCheck } from 'lucide-react';
+import { cleanUrl, cleanUrlDetailed, extractUrls, TRACKING_PARAMS } from '@/lib/urlCleaner';
 import { toast } from 'sonner';
+import CleanResultModal from '@/components/CleanResultModal';
 
 export default function HomePage() {
   const [inputUrl, setInputUrl] = useState('');
@@ -10,6 +11,7 @@ export default function HomePage() {
   const [autoCopy, setAutoCopy] = useState(true);
   const [oneTapClean, setOneTapClean] = useState(true);
   const [copiedId, setCopiedId] = useState(null);
+  const [modalResult, setModalResult] = useState(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('b4track_history');
@@ -18,6 +20,23 @@ export default function HomePage() {
     if (ac !== null) setAutoCopy(ac === 'true');
     const otc = localStorage.getItem('b4track_onetap');
     if (otc !== null) setOneTapClean(otc === 'true');
+
+    // Handle Web Share Target: ?share_url=...
+    const params = new URLSearchParams(window.location.search);
+    const shareUrl = params.get('share_url') || params.get('url') || params.get('text');
+    if (shareUrl) {
+      const urls = extractUrls(shareUrl);
+      const target = urls.length > 0 ? urls[0] : shareUrl;
+      const { cleaned, removed } = cleanUrlDetailed(target);
+      const entry = { id: Date.now(), original: target, cleaned, removed: removed || [], timestamp: new Date().toISOString() };
+      const saved2 = localStorage.getItem('b4track_history');
+      const hist = saved2 ? JSON.parse(saved2) : [];
+      const newHistory = [entry, ...hist].slice(0, 50);
+      localStorage.setItem('b4track_history', JSON.stringify(newHistory));
+      setHistory(newHistory);
+      setModalResult({ type: 'single', entries: [entry] });
+      window.history.replaceState({}, '', '/');
+    }
   }, []);
 
   const saveHistory = (newHistory) => {
@@ -26,26 +45,14 @@ export default function HomePage() {
   };
 
   const handleClean = () => {
-    if (!inputUrl.trim()) {
-      toast.error('Please enter a URL first');
-      return;
-    }
-    const cleaned = cleanUrl(inputUrl.trim());
-    const entry = {
-      id: Date.now(),
-      original: inputUrl.trim(),
-      cleaned,
-      timestamp: new Date().toISOString(),
-    };
+    if (!inputUrl.trim()) { toast.error('Please enter a URL first'); return; }
+    const { cleaned, removed } = cleanUrlDetailed(inputUrl.trim());
+    const entry = { id: Date.now(), original: inputUrl.trim(), cleaned, removed: removed || [], timestamp: new Date().toISOString() };
     const newHistory = [entry, ...history].slice(0, 50);
     saveHistory(newHistory);
-    if (autoCopy) {
-      navigator.clipboard.writeText(cleaned).catch(() => {});
-      toast.success('Link cleaned & copied!', { icon: '✨' });
-    } else {
-      toast.success('Link cleaned!', { icon: '✨' });
-    }
+    if (autoCopy) navigator.clipboard.writeText(cleaned).catch(() => {});
     setInputUrl('');
+    setModalResult({ type: 'single', entries: [entry] });
   };
 
   const handlePaste = async () => {
@@ -54,27 +61,44 @@ export default function HomePage() {
       setInputUrl(text);
       if (oneTapClean && text.trim()) {
         setTimeout(() => {
-          const cleaned = cleanUrl(text.trim());
-          const entry = {
-            id: Date.now(),
-            original: text.trim(),
-            cleaned,
-            timestamp: new Date().toISOString(),
-          };
+          const { cleaned, removed } = cleanUrlDetailed(text.trim());
+          const entry = { id: Date.now(), original: text.trim(), cleaned, removed: removed || [], timestamp: new Date().toISOString() };
           const newHistory = [entry, ...history].slice(0, 50);
           saveHistory(newHistory);
-          if (autoCopy) {
-            navigator.clipboard.writeText(cleaned).catch(() => {});
-            toast.success('Pasted, cleaned & copied!', { icon: '⚡' });
-          } else {
-            toast.success('Pasted & cleaned!', { icon: '⚡' });
-          }
+          if (autoCopy) navigator.clipboard.writeText(cleaned).catch(() => {});
           setInputUrl('');
+          setModalResult({ type: 'single', entries: [entry] });
         }, 100);
       }
     } catch {
       toast.error('Clipboard access denied');
     }
+  };
+
+  const handleSanitizeClipboard = async () => {
+    let text;
+    try {
+      text = await navigator.clipboard.readText();
+    } catch {
+      toast.error('Clipboard access denied');
+      return;
+    }
+    const urls = extractUrls(text);
+    if (urls.length === 0) { toast.error('No URLs found in clipboard'); return; }
+
+    const entries = urls.map((u) => {
+      const { cleaned, removed } = cleanUrlDetailed(u);
+      return { id: Date.now() + Math.random(), original: u, cleaned, removed: removed || [], timestamp: new Date().toISOString() };
+    });
+
+    // Replace each URL in the clipboard text with its cleaned version
+    let cleanedText = text;
+    entries.forEach((e) => { cleanedText = cleanedText.replace(e.original, e.cleaned); });
+    navigator.clipboard.writeText(cleanedText).catch(() => {});
+
+    const newHistory = [...entries, ...history].slice(0, 50);
+    saveHistory(newHistory);
+    setModalResult({ type: 'clipboard', entries });
   };
 
   const copyToClipboard = (text, id) => {
@@ -94,10 +118,7 @@ export default function HomePage() {
     }
   };
 
-  const clearHistory = () => {
-    saveHistory([]);
-    toast.success('History cleared');
-  };
+  const clearHistory = () => { saveHistory([]); toast.success('History cleared'); };
 
   const formatTime = (iso) => {
     const d = new Date(iso);
@@ -105,17 +126,13 @@ export default function HomePage() {
       ' • ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   };
 
+  const totalTrackersDodged = history.reduce((sum, item) => sum + (item.removed?.length || 0), 0);
+
   return (
     <div className="min-h-screen bg-[#0d0d1a] text-white flex flex-col max-w-md mx-auto relative">
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-10 pb-4">
-        <button className="p-2">
-          <div className="space-y-1.5">
-            <span className="block w-6 h-0.5 bg-white"></span>
-            <span className="block w-6 h-0.5 bg-white"></span>
-            <span className="block w-6 h-0.5 bg-white"></span>
-          </div>
-        </button>
+        <div className="w-10" />
         <h1 className="text-2xl font-black tracking-wider">
           <span className="text-white">B4</span>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">TRACK</span>
@@ -133,7 +150,18 @@ export default function HomePage() {
 
         {/* HOME TAB */}
         {activeTab === 'home' && (
-          <div className="space-y-6">
+          <div className="space-y-5">
+            {/* Stats strip */}
+            {totalTrackersDodged > 0 && (
+              <div className="flex items-center gap-2 bg-gradient-to-r from-violet-900/30 to-cyan-900/20 rounded-xl px-4 py-2.5 border border-violet-800/30">
+                <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+                <p className="text-sm text-gray-300">
+                  <span className="text-white font-bold">{totalTrackersDodged}</span> trackers dodged across{' '}
+                  <span className="text-white font-bold">{history.length}</span> links
+                </p>
+              </div>
+            )}
+
             {/* Input Card */}
             <div className="bg-[#16162a] rounded-2xl p-5 border border-[#2a2a4a]">
               <p className="text-violet-400 text-sm font-medium mb-3">Enter URL to clean</p>
@@ -168,6 +196,15 @@ export default function HomePage() {
               </div>
             </div>
 
+            {/* Sanitize Clipboard */}
+            <button
+              onClick={handleSanitizeClipboard}
+              className="w-full py-3.5 rounded-xl border border-cyan-700/40 bg-cyan-900/10 text-cyan-400 font-semibold text-sm hover:bg-cyan-900/20 hover:border-cyan-500 transition-all flex items-center justify-center gap-2"
+            >
+              <ShieldCheck className="w-5 h-5" />
+              Sanitize Clipboard
+            </button>
+
             {/* History Preview */}
             {history.length > 0 && (
               <div>
@@ -185,7 +222,6 @@ export default function HomePage() {
               </div>
             )}
 
-            {/* Empty state */}
             {history.length === 0 && (
               <div className="text-center py-12">
                 <div className="w-16 h-16 rounded-full bg-[#16162a] flex items-center justify-center mx-auto mb-4 border border-[#2a2a4a]">
@@ -208,6 +244,19 @@ export default function HomePage() {
                 </button>
               )}
             </div>
+            {/* Aggregate stats */}
+            {totalTrackersDodged > 0 && (
+              <div className="flex gap-3 mb-4">
+                <div className="flex-1 bg-[#16162a] rounded-xl p-3 border border-[#2a2a4a] text-center">
+                  <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">{totalTrackersDodged}</p>
+                  <p className="text-gray-500 text-xs">Trackers Dodged</p>
+                </div>
+                <div className="flex-1 bg-[#16162a] rounded-xl p-3 border border-[#2a2a4a] text-center">
+                  <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">{history.length}</p>
+                  <p className="text-gray-500 text-xs">Links Cleaned</p>
+                </div>
+              </div>
+            )}
             {history.length === 0 ? (
               <div className="text-center py-16">
                 <Clock className="w-12 h-12 text-gray-700 mx-auto mb-3" />
@@ -271,11 +320,13 @@ export default function HomePage() {
 
             {/* Tracker params list */}
             <div className="bg-[#16162a] rounded-2xl border border-[#2a2a4a] p-5">
-              <h3 className="text-white font-semibold mb-3">Tracked Parameters Removed</h3>
-              <div className="flex flex-wrap gap-2">
-                {['utm_source','utm_medium','utm_campaign','utm_term','utm_content','fbclid','gclid','ref','referrer','mc_cid','mc_eid','_ga','igshid','si','feature','pp'].map(p => (
+              <h3 className="text-white font-semibold mb-1">Tracking Parameters Removed</h3>
+              <p className="text-gray-500 text-xs mb-3">{TRACKING_PARAMS.size} params across all major platforms</p>
+              <div className="flex flex-wrap gap-1.5">
+                {[...TRACKING_PARAMS].slice(0, 40).map(p => (
                   <span key={p} className="px-2 py-1 rounded-md bg-[#0d0d1a] border border-[#2a2a4a] text-xs text-gray-400 font-mono">{p}</span>
                 ))}
+                <span className="px-2 py-1 rounded-md bg-[#0d0d1a] border border-[#2a2a4a] text-xs text-gray-600 font-mono">+{Math.max(0, TRACKING_PARAMS.size - 40)} more</span>
               </div>
             </div>
           </div>
@@ -288,6 +339,9 @@ export default function HomePage() {
         <NavButton icon={<Clock className="w-6 h-6" />} label="History" active={activeTab === 'history'} onClick={() => setActiveTab('history')} />
         <NavButton icon={<Settings className="w-6 h-6" />} label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
       </div>
+
+      {/* Clean Result Modal */}
+      <CleanResultModal result={modalResult} onClose={() => setModalResult(null)} />
     </div>
   );
 }
@@ -301,7 +355,12 @@ function HistoryCard({ item, copiedId, onCopy, onShare, formatTime }) {
       <div className="flex-1 min-w-0">
         <p className="text-white text-sm font-medium truncate">{item.original}</p>
         <p className="text-cyan-400 text-xs truncate">{item.cleaned}</p>
-        <p className="text-gray-600 text-xs mt-0.5">{formatTime(item.timestamp)}</p>
+        <div className="flex items-center gap-2 mt-0.5">
+          <p className="text-gray-600 text-xs">{formatTime(item.timestamp)}</p>
+          {item.removed?.length > 0 && (
+            <span className="text-xs text-red-400 font-medium">−{item.removed.length} tracker{item.removed.length !== 1 ? 's' : ''}</span>
+          )}
+        </div>
       </div>
       <div className="flex gap-3 shrink-0">
         <button onClick={() => onCopy(item.cleaned, item.id)}
