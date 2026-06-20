@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link2, Sparkles, Copy, Share2, Clock, Settings, Home, CheckCheck, ShieldCheck, Sun, Moon, X, Zap } from 'lucide-react';
 import { cleanUrl, cleanUrlDetailed, extractUrls, TRACKING_PARAMS } from '@/lib/urlCleaner';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 import CleanResultModal from '@/components/CleanResultModal';
 
 export default function HomePage() {
@@ -402,6 +403,9 @@ export default function HomePage() {
                   className={`flex-1 py-3 rounded-xl border text-center text-sm transition-all flex items-center justify-center gap-2 ${d ? 'bg-gradient-to-r from-yellow-600/20 to-orange-600/20 border-yellow-700/30 text-yellow-400 hover:from-yellow-600/30 hover:to-orange-600/30' : 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100'}`}>
                   ☕ Buy me a coffee
                 </a>
+              </div>
+              <div className="text-center pt-1">
+                <Link to="/privacy" className={`text-xs transition-colors ${d ? 'text-gray-600 hover:text-gray-400' : 'text-gray-400 hover:text-gray-600'}`}>Privacy Policy</Link>
               </div>
             </div>
 
