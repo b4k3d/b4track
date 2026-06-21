@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { Home, Clock, Settings, Sun, Moon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,6 +18,8 @@ export default function HomePage() {
   const [sharedModalResult, setSharedModalResult] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  // Refs to each tab's scrollable container for scroll-to-top on active tab tap
+  const tabScrollRefs = useRef({});
   const d = darkMode;
   const { bg, navBg, border, heading, subtext, muted } = getTheme(d);
 
@@ -72,7 +74,7 @@ export default function HomePage() {
               <button onClick={() => setMenuOpen(false)} className={`absolute top-4 right-4 ${subtext} transition-colors select-none`} style={{ paddingTop: 'env(safe-area-inset-top)' }}>
                 <X className="w-5 h-5" />
               </button>
-              <h2 className="text-xl font-black tracking-wider mb-8">
+              <h2 className="text-xl font-black tracking-wider mb-8 select-none">
                 <span className={heading}>B4</span>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-cyan-500">TRACK</span>
               </h2>
@@ -115,7 +117,7 @@ export default function HomePage() {
 
       {/* Header */}
       <div
-        className="flex items-center justify-between px-5 pb-4 shrink-0"
+        className="flex items-center justify-between px-5 pb-4 shrink-0 select-none"
         style={{ paddingTop: 'calc(2.5rem + env(safe-area-inset-top))' }}
       >
         <button className="p-2 select-none" onClick={() => setMenuOpen(true)}>
@@ -171,6 +173,7 @@ export default function HomePage() {
           return (
             <motion.div
               key={path}
+              ref={el => { if (el) tabScrollRefs.current[path] = el; }}
               initial={false}
               animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : (location.pathname > path ? -20 : 20) }}
               transition={{ duration: 0.18, ease: 'easeInOut' }}
@@ -185,7 +188,7 @@ export default function HomePage() {
 
       {/* Bottom Nav */}
       <div
-        className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md ${navBg} border-t ${border} px-6 flex justify-around items-center shadow-lg`}
+        className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md ${navBg} border-t ${border} px-6 flex justify-around items-center shadow-lg select-none`}
         style={{ paddingBottom: 'env(safe-area-inset-bottom)', paddingTop: '0.75rem' }}
       >
         {navItems.map(({ icon, label, path }) => {
@@ -195,7 +198,15 @@ export default function HomePage() {
           return (
             <button
               key={path}
-              onClick={() => navigate(path)}
+              onClick={() => {
+                if (isActive) {
+                  // Scroll active tab to top
+                  const el = tabScrollRefs.current[path];
+                  if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                  navigate(path);
+                }
+              }}
               className="flex flex-col items-center gap-1 min-w-[60px] pb-3 select-none"
             >
               <span className={isActive ? activeColor : inactiveColor}>{icon}</span>

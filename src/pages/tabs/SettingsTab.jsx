@@ -20,9 +20,13 @@ export default function SettingsTab({ autoCopy, setAutoCopy, oneTapClean, setOne
   const handleDeleteAccount = async () => {
     setDeletingAccount(true);
     try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        await base44.auth.logout();
+      // Attempt permanent account deletion if the SDK supports it
+      if (typeof base44.auth.deleteAccount === 'function') {
+        await base44.auth.deleteAccount();
+      } else {
+        // Fallback: log out and clear all local data
+        const isAuth = await base44.auth.isAuthenticated();
+        if (isAuth) await base44.auth.logout();
       }
     } catch {}
     localStorage.clear();
