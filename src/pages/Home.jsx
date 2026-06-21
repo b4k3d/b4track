@@ -48,12 +48,6 @@ export default function HomePage() {
     { icon: <Settings className="w-6 h-6" />, label: 'Settings', path: '/settings' },
   ];
 
-  const tabVariants = {
-    initial: { opacity: 0, x: 20 },
-    animate: { opacity: 1, x: 0 },
-    exit:    { opacity: 0, x: -20 },
-  };
-
   return (
     <div className={`min-h-screen ${bg} flex flex-col max-w-md mx-auto relative`}>
 
@@ -143,41 +137,50 @@ export default function HomePage() {
         </a>
       </div>
 
-      {/* Tab content with slide transitions */}
-      <div className="flex-1 overflow-y-auto relative" style={{ paddingBottom: 'calc(4.5rem + env(safe-area-inset-bottom))' }}>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={location.pathname}
-            variants={tabVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={{ duration: 0.18, ease: 'easeInOut' }}
-            className="min-h-full"
-          >
-            <Routes>
-              <Route index element={<Navigate to="/home" replace />} />
-              <Route path="home" element={
-                <HomeTab
-                  history={history} saveHistory={saveHistory}
-                  autoCopy={autoCopy} oneTapClean={oneTapClean} aggressiveMode={aggressiveMode}
-                  darkMode={d}
-                />
-              } />
-              <Route path="history" element={
-                <HistoryTab history={history} saveHistory={saveHistory} darkMode={d} />
-              } />
-              <Route path="settings" element={
-                <SettingsTab
-                  autoCopy={autoCopy} setAutoCopy={setAutoCopy}
-                  oneTapClean={oneTapClean} setOneTapClean={setOneTapClean}
-                  aggressiveMode={aggressiveMode} setAggressiveMode={setAggressiveMode}
-                  darkMode={d}
-                />
-              } />
-            </Routes>
-          </motion.div>
-        </AnimatePresence>
+      {/* Always-mounted tabs — hidden via CSS to preserve scroll position and state */}
+      <div className="flex-1 relative overflow-hidden" style={{ paddingBottom: 'calc(4.5rem + env(safe-area-inset-bottom))' }}>
+        {/* Route redirect handler */}
+        <Routes>
+          <Route index element={<Navigate to="/home" replace />} />
+          <Route path="home" element={null} />
+          <Route path="history" element={null} />
+          <Route path="settings" element={null} />
+        </Routes>
+
+        {[
+          { path: '/home', el: (
+            <HomeTab
+              history={history} saveHistory={saveHistory}
+              autoCopy={autoCopy} oneTapClean={oneTapClean} aggressiveMode={aggressiveMode}
+              darkMode={d}
+            />
+          )},
+          { path: '/history', el: (
+            <HistoryTab history={history} saveHistory={saveHistory} darkMode={d} />
+          )},
+          { path: '/settings', el: (
+            <SettingsTab
+              autoCopy={autoCopy} setAutoCopy={setAutoCopy}
+              oneTapClean={oneTapClean} setOneTapClean={setOneTapClean}
+              aggressiveMode={aggressiveMode} setAggressiveMode={setAggressiveMode}
+              darkMode={d}
+            />
+          )},
+        ].map(({ path, el }) => {
+          const isActive = location.pathname === path;
+          return (
+            <motion.div
+              key={path}
+              initial={false}
+              animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : (location.pathname > path ? -20 : 20) }}
+              transition={{ duration: 0.18, ease: 'easeInOut' }}
+              className="absolute inset-0 overflow-y-auto"
+              style={{ pointerEvents: isActive ? 'auto' : 'none', visibility: isActive ? 'visible' : 'hidden' }}
+            >
+              {el}
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Bottom Nav */}

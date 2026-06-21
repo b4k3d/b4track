@@ -3,6 +3,7 @@ import { Clock } from 'lucide-react';
 import { getTheme } from '@/lib/themeClasses';
 import { toast } from 'sonner';
 import HistoryCard from '@/components/HistoryCard';
+import PullToRefresh from '@/components/PullToRefresh';
 
 export default function HistoryTab({ history, saveHistory, darkMode }) {
   const [copiedId, setCopiedId] = useState(null);
@@ -31,7 +32,14 @@ export default function HistoryTab({ history, saveHistory, darkMode }) {
       ' • ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   };
 
+  const handleRefresh = async () => {
+    const saved = localStorage.getItem('b4track_history');
+    if (saved) saveHistory(JSON.parse(saved));
+    await new Promise(r => setTimeout(r, 400));
+  };
+
   return (
+    <PullToRefresh onRefresh={handleRefresh} darkMode={d}>
     <div className="px-4 pt-4">
       <div className="flex items-center justify-between mb-4">
         <h2 className={`font-bold text-xl ${heading}`}>History</h2>
@@ -68,5 +76,6 @@ export default function HistoryTab({ history, saveHistory, darkMode }) {
         </div>
       )}
     </div>
+    </PullToRefresh>
   );
 }

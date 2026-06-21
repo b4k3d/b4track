@@ -1,16 +1,30 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Trash2, AlertTriangle } from 'lucide-react';
+import { Trash2, AlertTriangle, UserX } from 'lucide-react';
 import { TRACKING_PARAMS } from '@/lib/urlCleaner';
 import { getTheme } from '@/lib/themeClasses';
+import { base44 } from '@/api/base44Client';
 
 export default function SettingsTab({ autoCopy, setAutoCopy, oneTapClean, setOneTapClean, aggressiveMode, setAggressiveMode, darkMode }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const d = darkMode;
   const { card, border, heading, subtext, muted, divider } = getTheme(d);
 
-  const handleDeleteAccount = () => {
-    // Clear all local data
+  const handleDeleteAllData = () => {
+    localStorage.clear();
+    window.location.reload();
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeletingAccount(true);
+    try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        await base44.auth.logout();
+      }
+    } catch {}
     localStorage.clear();
     window.location.reload();
   };
@@ -79,9 +93,10 @@ export default function SettingsTab({ autoCopy, setAutoCopy, oneTapClean, setOne
       </div>
 
       {/* Danger Zone */}
-      <div className={`${card} rounded-2xl border ${d ? 'border-red-900/40' : 'border-red-200'} p-5 shadow-sm`}>
+      <div className={`${card} rounded-2xl border ${d ? 'border-red-900/40' : 'border-red-200'} p-5 shadow-sm space-y-3`}>
         <h3 className={`font-semibold mb-1 ${d ? 'text-red-400' : 'text-red-600'}`}>Danger Zone</h3>
-        <p className={`text-xs mb-4 ${subtext}`}>Permanently clears all local data.</p>
+        <p className={`text-xs ${subtext}`}>Permanently clears local data or removes your account.</p>
+
         <button
           onClick={() => setShowDeleteConfirm(true)}
           className="w-full py-3 rounded-xl border border-red-700/50 bg-red-900/20 text-red-400 text-sm font-semibold flex items-center justify-center gap-2 hover:bg-red-900/30 transition-all select-none"
@@ -89,9 +104,17 @@ export default function SettingsTab({ autoCopy, setAutoCopy, oneTapClean, setOne
           <Trash2 className="w-4 h-4" />
           Delete All Data
         </button>
+
+        <button
+          onClick={() => setShowDeleteAccountConfirm(true)}
+          className="w-full py-3 rounded-xl border border-red-700/50 bg-red-900/10 text-red-500 text-sm font-semibold flex items-center justify-center gap-2 hover:bg-red-900/25 transition-all select-none"
+        >
+          <UserX className="w-4 h-4" />
+          Delete Account
+        </button>
       </div>
 
-      {/* Confirm dialog */}
+      {/* Confirm Delete Data dialog */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-6">
           <div className={`w-full max-w-sm ${d ? 'bg-[#16162a] border-[#2a2a4a]' : 'bg-white border-gray-200'} border rounded-2xl p-6 space-y-4 shadow-2xl`}>
@@ -112,10 +135,43 @@ export default function SettingsTab({ autoCopy, setAutoCopy, oneTapClean, setOne
                 Cancel
               </button>
               <button
-                onClick={handleDeleteAccount}
+                onClick={handleDeleteAllData}
                 className="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-bold transition-colors select-none"
               >
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm Delete Account dialog */}
+      {showDeleteAccountConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-6">
+          <div className={`w-full max-w-sm ${d ? 'bg-[#16162a] border-[#2a2a4a]' : 'bg-white border-gray-200'} border rounded-2xl p-6 space-y-4 shadow-2xl`}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-red-900/30 flex items-center justify-center shrink-0">
+                <UserX className="w-5 h-5 text-red-400" />
+              </div>
+              <div>
+                <p className={`font-bold ${heading}`}>Delete account?</p>
+                <p className={`text-xs ${subtext}`}>Your session and all local data will be removed.</p>
+              </div>
+            </div>
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={() => setShowDeleteAccountConfirm(false)}
+                disabled={deletingAccount}
+                className={`flex-1 py-3 rounded-xl border text-sm font-medium select-none ${d ? 'border-[#3a3a6a] text-gray-400 hover:text-white' : 'border-gray-300 text-gray-600 hover:text-gray-900'} transition-colors disabled:opacity-50`}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deletingAccount}
+                className="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-bold transition-colors select-none disabled:opacity-50"
+              >
+                {deletingAccount ? 'Deleting…' : 'Delete'}
               </button>
             </div>
           </div>

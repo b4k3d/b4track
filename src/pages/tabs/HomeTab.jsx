@@ -5,6 +5,7 @@ import { getTheme } from '@/lib/themeClasses';
 import { toast } from 'sonner';
 import HistoryCard from '@/components/HistoryCard';
 import CleanResultModal from '@/components/CleanResultModal';
+import PullToRefresh from '@/components/PullToRefresh';
 
 export default function HomeTab({ history, saveHistory, autoCopy, oneTapClean, aggressiveMode, darkMode }) {
   const [inputUrl, setInputUrl] = useState('');
@@ -84,7 +85,15 @@ export default function HomeTab({ history, saveHistory, autoCopy, oneTapClean, a
       ' • ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   };
 
+  const handleRefresh = async () => {
+    // Re-read history from localStorage (another tab/PWA instance may have written)
+    const saved = localStorage.getItem('b4track_history');
+    if (saved) saveHistory(JSON.parse(saved));
+    await new Promise(r => setTimeout(r, 400));
+  };
+
   return (
+    <PullToRefresh onRefresh={handleRefresh} darkMode={d}>
     <div className="space-y-5 px-4 pt-4">
       {totalTrackersDodged > 0 && (
         <div className={`flex items-center gap-2 rounded-xl px-4 py-2.5 border ${d ? 'bg-gradient-to-r from-violet-900/30 to-cyan-900/20 border-violet-800/30' : 'bg-violet-50 border-violet-200'}`}>
@@ -164,5 +173,6 @@ export default function HomeTab({ history, saveHistory, autoCopy, oneTapClean, a
 
       <CleanResultModal result={modalResult} onClose={() => setModalResult(null)} />
     </div>
+    </PullToRefresh>
   );
 }
