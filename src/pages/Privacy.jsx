@@ -16,7 +16,7 @@ export default function Privacy() {
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">TRACK</span>
       </h1>
       <h2 className="text-xl font-semibold text-gray-300 mb-1">Privacy Policy</h2>
-      <p className="text-gray-500 text-sm mb-10">Last updated: June 20, 2025</p>
+      <p className="text-gray-500 text-sm mb-10">Last updated: June 20, 2026</p>
 
       <div className="space-y-8 text-gray-300 leading-relaxed">
 
@@ -67,9 +67,23 @@ export default function Privacy() {
         </section>
 
         <section>
-          <h3 className="text-white font-semibold text-lg mb-2">Internet Permission</h3>
+          <h3 className="text-white font-semibold text-lg mb-2">Permissions</h3>
+          <ul className="space-y-2 list-none">
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-400 mt-0.5">→</span>
+              <span><strong className="text-white">Internet</strong> — Used solely to load the app itself. No user data is transmitted.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-400 mt-0.5">→</span>
+              <span><strong className="text-white">Clipboard</strong> — Read only when you tap "Paste" or "Sanitize Clipboard." Never stored or sent anywhere.</span>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h3 className="text-white font-semibold text-lg mb-2">Google Play Data Safety</h3>
           <p>
-            The app is delivered as a Progressive Web App (PWA). The internet permission is used solely to load the app itself — not to transmit any user data.
+            This app complies with Google Play's data safety requirements. No user data is collected, shared, or transmitted to any server. All processing occurs entirely on-device.
           </p>
         </section>
 

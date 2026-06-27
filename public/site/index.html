@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B4TRACK • Clean Links. Kill Trackers.</title>
+  <meta name="description" content="Strip UTM, fbclid, gclid and 60+ tracking parameters from any URL instantly. 100% on-device — no data ever leaves your device." />
+  <link rel="canonical" href="https://b4track.app/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="B4TRACK • Clean Links. Kill Trackers." />
+  <meta property="og:description" content="Strip UTM, fbclid, gclid and 60+ tracking parameters instantly. 100% on-device." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://b4track.app/" />
+  <meta property="og:image" content="https://b4track.app/og-image.png" />
+  <meta property="og:site_name" content="B4TRACK" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="B4TRACK • Clean Links. Kill Trackers." />
+  <meta name="twitter:description" content="Strip UTM, fbclid, gclid and 60+ tracking params instantly. 100% local." />
+  <meta name="twitter:image" content="https://b4track.app/og-image.png" />
+
+  <!-- JSON-LD Structured Data (Google loves this) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "B4TRACK",
+    "operatingSystem": "Android, iOS, Web",
+    "applicationCategory": "UtilitiesApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "description": "Strip UTM, fbclid, gclid and 60+ tracking parameters from any URL instantly. 100% on-device.",
+    "url": "https://b4track.app/",
+    "privacyPolicyUrl": "https://b4track.app/privacy"
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .gradient-text { background: linear-gradient(90deg, #a855f7, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .glow { box-shadow: 0 0 40px rgba(139,92,246,0.25), 0 0 80px rgba(34,211,238,0.10); }
+    .pill-btn { transition: transform 0.15s ease, opacity 0.15s ease; }
+    .pill-btn:hover { transform: translateY(-1px); opacity: 0.9; }
+    .tracker-chip.removed { text-decoration: line-through; opacity: 0.4; }
+    .tracker-chip { transition: all 0.4s ease; }
+  </style>
+</head>
+<body class="bg-[#07071a] text-white antialiased">
+
+  <!-- ── NAV ───────────────────────────────────────── -->
+  <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-[#07071a]/80 backdrop-blur-md">
+    <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="/" class="text-xl font-black tracking-wider">
+        B4<span class="gradient-text">TRACK</span>
+      </a>
+      <div class="flex items-center gap-6 text-sm text-gray-400">
+        <a href="#features" class="hover:text-white transition-colors">Features</a>
+        <a href="#demo" class="hover:text-white transition-colors">Demo</a>
+        <a href="/privacy" class="hover:text-white transition-colors">Privacy</a>
+        <a href="https://b4track.app" target="_blank" rel="noopener noreferrer"
+          class="px-4 py-1.5 rounded-full bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-semibold hover:opacity-90 transition-opacity">
+          Open App
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ──────────────────────────────────────── -->
+  <section class="min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 pb-16">
+    <!-- Subtle radial glow -->
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 80% 50% at 50% 20%, rgba(139,92,246,0.12) 0%, transparent 70%);"></div>
+
+    <div class="relative max-w-3xl">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-medium mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse"></span>
+        100% On-Device · Zero Data Collected
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-black leading-tight tracking-tight mb-6">
+        Clean Links.<br /><span class="gradient-text">Kill Trackers.</span>
+      </h1>
+      <p class="text-lg md:text-xl text-gray-400 max-w-xl mx-auto mb-10 leading-relaxed">
+        Strip UTM tags, fbclid, gclid and 60+ tracking parameters from any URL — instantly, privately, entirely on your device.
+      </p>
+
+      <!-- CTAs -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+        <a href="https://b4track.app" target="_blank" rel="noopener noreferrer"
+          class="pill-btn px-8 py-3.5 rounded-full bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-bold text-base shadow-lg shadow-violet-900/40">
+          Open Web App →
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.b4track.app" target="_blank" rel="noopener noreferrer"
+          class="pill-btn px-8 py-3.5 rounded-full border border-white/10 bg-white/5 text-gray-200 font-semibold text-base hover:border-white/20 transition-colors">
+          ▶ Google Play
+        </a>
+      </div>
+
+      <!-- Trust pills -->
+      <div class="flex flex-wrap items-center justify-center gap-3 text-sm text-gray-500">
+        <span class="flex items-center gap-1.5"><span class="text-emerald-400">✓</span> No account required</span>
+        <span class="text-gray-700">·</span>
+        <span class="flex items-center gap-1.5"><span class="text-emerald-400">✓</span> No ads, ever</span>
+        <span class="text-gray-700">·</span>
+        <span class="flex items-center gap-1.5"><span class="text-emerald-400">✓</span> Free forever</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INTERACTIVE DEMO ──────────────────────────── -->
+  <section id="demo" class="py-20 px-6">
+    <div class="max-w-2xl mx-auto">
+      <p class="text-center text-xs font-semibold uppercase tracking-widest text-violet-400 mb-3">Live Demo</p>
+      <h2 class="text-3xl md:text-4xl font-black text-center mb-3">Try it right now</h2>
+      <p class="text-center text-gray-500 mb-10">Paste any URL — tracking params are stripped instantly in your browser.</p>
+
+      <div class="rounded-2xl border border-white/8 bg-[#0d0d1f] p-6 glow">
+        <!-- Input -->
+        <div class="flex gap-2 mb-5">
+          <input id="demo-input" type="url"
+            placeholder="https://example.com/product?utm_source=fb&fbclid=abc123"
+            class="flex-1 bg-[#0a0a18] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-violet-500/60 transition-colors" />
+          <button onclick="demoClean()"
+            class="px-5 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-bold text-sm hover:opacity-90 transition-opacity whitespace-nowrap">
+            Clean
+          </button>
+        </div>
+
+        <!-- Tracker chips (visual before state) -->
+        <div id="tracker-chips" class="flex flex-wrap gap-2 mb-5 min-h-[28px]"></div>
+
+        <!-- Output -->
+        <div id="demo-output" class="hidden">
+          <p class="text-xs text-gray-600 uppercase tracking-widest font-medium mb-2">Cleaned URL</p>
+          <div class="flex items-center gap-2 bg-[#0a0a18] border border-cyan-500/20 rounded-xl px-4 py-3">
+            <p id="demo-result" class="flex-1 text-cyan-400 text-sm break-all font-mono"></p>
+            <button onclick="demoCopy()" id="copy-btn"
+              class="shrink-0 text-xs text-gray-500 hover:text-white transition-colors font-medium">Copy</button>
+          </div>
+          <p id="demo-stats" class="text-xs text-gray-600 mt-2"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ──────────────────────────────────── -->
+  <section id="features" class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <p class="text-center text-xs font-semibold uppercase tracking-widest text-violet-400 mb-3">Why B4TRACK</p>
+      <h2 class="text-3xl md:text-4xl font-black text-center mb-16">Everything you need. Nothing you don't.</h2>
+
+      <div class="grid md:grid-cols-3 gap-5">
+        <!-- Card helper macro via repetition -->
+        <div class="rounded-2xl border border-white/6 bg-[#0d0d1f] p-6">
+          <div class="w-10 h-10 rounded-xl bg-violet-500/15 flex items-center justify-center mb-4 text-xl">🔗</div>
+          <h3 class="font-bold text-lg mb-2">Share Sheet Integration</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Share any link from any app directly into B4TRACK — get back a clean URL in one tap.</p>
+        </div>
+        <div class="rounded-2xl border border-white/6 bg-[#0d0d1f] p-6">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/15 flex items-center justify-center mb-4 text-xl">⚡</div>
+          <h3 class="font-bold text-lg mb-2">One-Tap & Auto-Clean</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Auto-clean on paste or one-tap mode — clean your clipboard without even opening the keyboard.</p>
+        </div>
+        <div class="rounded-2xl border border-white/6 bg-[#0d0d1f] p-6">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4 text-xl">🛡️</div>
+          <h3 class="font-bold text-lg mb-2">Truly Private</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Zero network requests during operation. History lives in your device's localStorage only. No servers, no accounts.</p>
+        </div>
+        <div class="rounded-2xl border border-white/6 bg-[#0d0d1f] p-6">
+          <div class="w-10 h-10 rounded-xl bg-violet-500/15 flex items-center justify-center mb-4 text-xl">📋</div>
+          <h3 class="font-bold text-lg mb-2">Bulk Clipboard Clean</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Paste a block of text with multiple links — B4TRACK finds and cleans every URL at once.</p>
+        </div>
+        <div class="rounded-2xl border border-white/6 bg-[#0d0d1f] p-6">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/15 flex items-center justify-center mb-4 text-xl">🕓</div>
+          <h3 class="font-bold text-lg mb-2">Full History</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Browse everything you've cleaned, copy or share again, and see exactly which trackers were stripped.</p>
+        </div>
+        <div class="rounded-2xl border border-white/6 bg-[#0d0d1f] p-6">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4 text-xl">📱</div>
+          <h3 class="font-bold text-lg mb-2">Installable PWA</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Add to your home screen for a native-like experience on any device — Android, iOS, or desktop.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TRACKERS STRIP ─────────────────────────────── -->
+  <section class="py-16 px-6 border-y border-white/5 bg-[#0a0a16]">
+    <div class="max-w-3xl mx-auto text-center">
+      <p class="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-6">Strips all of these (and many more)</p>
+      <div class="flex flex-wrap justify-center gap-2">
+        {["utm_source","utm_medium","utm_campaign","utm_term","utm_content","fbclid","gclid","gclsrc","dclid","msclkid","mc_eid","igshid","twclid","ref","source","affiliate","s_cid","yclid","mkt_tok","vero_id","_openstat","ysclid"].map(p =>
+          `<span class="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono">${p}</span>`
+        ).join('')}
+        <span class="px-3 py-1 rounded-full border border-white/10 text-gray-600 text-xs">+ 40 more</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA BANNER ────────────────────────────────── -->
+  <section class="py-24 px-6 text-center">
+    <div class="max-w-xl mx-auto">
+      <h2 class="text-4xl md:text-5xl font-black mb-4">Start cleaning links<br /><span class="gradient-text">right now.</span></h2>
+      <p class="text-gray-500 mb-8">No sign-up. No install required. Just open and go.</p>
+      <a href="https://b4track.app" target="_blank" rel="noopener noreferrer"
+        class="pill-btn inline-block px-10 py-4 rounded-full bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-bold text-base shadow-xl shadow-violet-900/40">
+        Open B4TRACK →
+      </a>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────── -->
+  <footer class="border-t border-white/5 py-10 px-6">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
+      <span class="font-black text-gray-400 text-base">B4<span class="gradient-text">TRACK</span></span>
+      <div class="flex items-center gap-6">
+        <a href="/privacy" class="hover:text-gray-300 transition-colors">Privacy Policy</a>
+        <a href="https://github.com/b4k3d/b4track" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition-colors">GitHub</a>
+        <a href="https://buymeacoffee.com/b4k3d" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition-colors">Buy Me a Coffee ☕</a>
+      </div>
+      <span>© <span id="yr"></span> B4TRACK</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    const TRACKING_PARAMS = new Set([
+      'utm_source','utm_medium','utm_campaign','utm_term','utm_content',
+      'fbclid','gclid','gclsrc','dclid','msclkid','mc_eid','igshid',
+      'twclid','ref','source','affiliate','s_cid','yclid','mkt_tok',
+      'vero_id','_openstat','ysclid','_hsenc','_hsmi','hsa_acc',
+      'hsa_cam','hsa_grp','hsa_ad','hsa_src','hsa_tgt','hsa_kw',
+      'hsa_mt','hsa_net','hsa_ver','mc_cid','sscid','zanpid','otc',
+    ]);
+
+    function demoClean() {
+      const raw = document.getElementById('demo-input').value.trim();
+      if (!raw) return;
+      let url;
+      try { url = new URL(raw); } catch { return; }
+
+      const removed = [];
+      const kept = [];
+      url.searchParams.forEach((v, k) => {
+        if (TRACKING_PARAMS.has(k.toLowerCase())) removed.push(k);
+        else kept.push([k, v]);
+      });
+
+      // rebuild
+      const clean = new URL(url.origin + url.pathname);
+      kept.forEach(([k, v]) => clean.searchParams.set(k, v));
+
+      // render chips
+      const chips = document.getElementById('tracker-chips');
+      chips.innerHTML = [...removed, ...kept.map(([k]) => k)].map(p => {
+        const isRemoved = removed.includes(p);
+        return `<span class="tracker-chip px-2 py-0.5 rounded-md text-xs font-mono border ${isRemoved ? 'border-red-500/30 bg-red-500/10 text-red-400 line-through opacity-40' : 'border-white/10 bg-white/5 text-gray-400'}">${p}</span>`;
+      }).join('');
+
+      // render output
+      document.getElementById('demo-result').textContent = clean.toString();
+      document.getElementById('demo-stats').textContent = removed.length
+        ? `${removed.length} tracker${removed.length > 1 ? 's' : ''} removed`
+        : 'No trackers found in this URL.';
+      document.getElementById('demo-output').classList.remove('hidden');
+    }
+
+    function demoCopy() {
+      const text = document.getElementById('demo-result').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      });
+    }
+
+    // Allow Enter key
+    document.getElementById('demo-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') demoClean();
+    });
+
+    // Render tracker strip list from template literal
+    document.querySelectorAll('[class*="flex-wrap justify-center gap-2"]')[0].innerHTML =
+      ["utm_source","utm_medium","utm_campaign","utm_term","utm_content","fbclid","gclid","gclsrc","dclid","msclkid","mc_eid","igshid","twclid","ref","source","affiliate","s_cid","yclid","mkt_tok","vero_id","_openstat","ysclid"]
+      .map(p => `<span class="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono">${p}</span>`)
+      .join('') + `<span class="px-3 py-1 rounded-full border border-white/10 text-gray-600 text-xs">+ 40 more</span>`;
+  </script>
+</body>
+</html>
