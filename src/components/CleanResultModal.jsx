@@ -22,13 +22,14 @@ export default function CleanResultModal({ result, onClose }) {
   };
 
   const handleShare = async () => {
-    const url = result.entries[0]?.cleaned;
-    if (!url) return;
-    if (navigator.share) {
-      await navigator.share({ url });
-    } else {
-      handleCopy();
-    }
+    try {
+      if (!navigator.share) { handleCopy(); return; }
+      if (result.entries.length === 1) {
+        await navigator.share({ url: result.entries[0].cleaned });
+      } else {
+        await navigator.share({ text: result.entries.map((e) => e.cleaned).join('\n') });
+      }
+    } catch {}
   };
 
   return (
@@ -96,15 +97,13 @@ export default function CleanResultModal({ result, onClose }) {
             {copied ? <CheckCheck className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
             {copied ? 'Copied!' : 'Copy'}
           </button>
-          {result.entries.length === 1 && (
-            <button
-              onClick={handleShare}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 text-sm font-bold text-white hover:from-violet-500 hover:to-cyan-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-violet-900/40"
-            >
-              <Share2 className="w-4 h-4" />
-              Clean & Share
-            </button>
-          )}
+          <button
+            onClick={handleShare}
+            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 text-sm font-bold text-white hover:from-violet-500 hover:to-cyan-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-violet-900/40"
+          >
+            <Share2 className="w-4 h-4" />
+            {result.entries.length === 1 ? 'Clean & Share' : 'Share All'}
+          </button>
         </div>
       </div>
     </div>

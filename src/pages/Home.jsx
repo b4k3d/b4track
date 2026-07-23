@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
-import { Home, Clock, Settings, Sun, Moon, X } from 'lucide-react';
+import { Home, Clock, Settings, Sun, Moon, X, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cleanUrlDetailed, extractUrls } from '@/lib/urlCleaner';
 import { useAppSettings } from '@/lib/useAppSettings';
@@ -8,6 +8,7 @@ import { getTheme } from '@/lib/themeClasses';
 import HomeTab from './tabs/HomeTab';
 import HistoryTab from './tabs/HistoryTab';
 import SettingsTab from './tabs/SettingsTab';
+import BulkTab from './tabs/BulkTab';
 import CleanResultModal from '@/components/CleanResultModal';
 import { useState } from 'react';
 
@@ -25,7 +26,7 @@ export default function HomePage() {
 
   // Handle incoming share_target URLs
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     // Different Android versions/browsers populate different share fields — check the
     // common ones, then fall back to scanning ALL param values for a URL so no variant
     // slips through uncleaned.
@@ -48,12 +49,13 @@ export default function HomePage() {
       setSharedModalResult({ type: 'single', entries: [entry] });
       window.history.replaceState({}, '', '/');
     }
-  }, []);
+  }, [location.search]);
 
   const activeTab = location.pathname.replace('/', '') || 'home';
 
   const navItems = [
     { icon: <Home className="w-6 h-6" />, label: 'Home', path: '/home' },
+    { icon: <Layers className="w-6 h-6" />, label: 'Bulk', path: '/bulk' },
     { icon: <Clock className="w-6 h-6" />, label: 'History', path: '/history' },
     { icon: <Settings className="w-6 h-6" />, label: 'Settings', path: '/settings' },
   ];
@@ -153,6 +155,7 @@ export default function HomePage() {
         <Routes>
           <Route index element={<Navigate to="/home" replace />} />
           <Route path="home" element={null} />
+          <Route path="bulk" element={null} />
           <Route path="history" element={null} />
           <Route path="settings" element={null} />
         </Routes>
@@ -173,6 +176,13 @@ export default function HomePage() {
               autoCopy={autoCopy} setAutoCopy={setAutoCopy}
               oneTapClean={oneTapClean} setOneTapClean={setOneTapClean}
               aggressiveMode={aggressiveMode} setAggressiveMode={setAggressiveMode}
+              darkMode={d}
+            />
+          )},
+          { path: '/bulk', el: (
+            <BulkTab
+              history={history} saveHistory={saveHistory}
+              aggressiveMode={aggressiveMode}
               darkMode={d}
             />
           )},
