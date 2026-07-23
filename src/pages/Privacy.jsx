@@ -16,7 +16,7 @@ export default function Privacy() {
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">TRACK</span>
       </h1>
       <h2 className="text-xl font-semibold text-gray-300 mb-1">Privacy Policy</h2>
-      <p className="text-gray-500 text-sm mb-10">Last updated: June 20, 2026</p>
+      <p className="text-gray-500 text-sm mb-10">Last updated: July 23, 2026</p>
 
       <div className="space-y-8 text-gray-300 leading-relaxed">
 
