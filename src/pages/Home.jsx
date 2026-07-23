@@ -26,7 +26,15 @@ export default function HomePage() {
   // Handle incoming share_target URLs
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const shareUrl = params.get('share_url') || params.get('url') || params.get('text');
+    // Different Android versions/browsers populate different share fields — check the
+    // common ones, then fall back to scanning ALL param values for a URL so no variant
+    // slips through uncleaned.
+    let shareUrl = params.get('share_url') || params.get('url') || params.get('text') || params.get('title') || params.get('link');
+    if (!shareUrl) {
+      for (const value of params.values()) {
+        if (/https?:\/\//i.test(value)) { shareUrl = value; break; }
+      }
+    }
     if (shareUrl) {
       const urls = extractUrls(shareUrl);
       const target = urls.length > 0 ? urls[0] : shareUrl;
