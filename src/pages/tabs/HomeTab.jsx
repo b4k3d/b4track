@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link2, Sparkles, ShieldCheck } from 'lucide-react';
 import { cleanUrlDetailed, extractUrls } from '@/lib/urlCleaner';
 import { getTheme } from '@/lib/themeClasses';
@@ -11,6 +11,7 @@ export default function HomeTab({ history, saveHistory, autoCopy, oneTapClean, a
   const [inputUrl, setInputUrl] = useState('');
   const [copiedId, setCopiedId] = useState(null);
   const [modalResult, setModalResult] = useState(null);
+  const inputRef = useRef(null);
   const d = darkMode;
   const { bg, card, cardInner, border, borderInput, heading, subtext, muted, inputText } = getTheme(d);
 
@@ -33,17 +34,22 @@ export default function HomeTab({ history, saveHistory, autoCopy, oneTapClean, a
   const handlePaste = async () => {
     try {
       const text = await navigator.clipboard.readText();
-      setInputUrl(text);
-      if (oneTapClean && text.trim()) {
-        setTimeout(() => {
-          const { cleaned, removed } = cleanUrlDetailed(text.trim(), aggressiveMode);
-          const entry = { id: Date.now(), original: text.trim(), cleaned, removed: removed || [], timestamp: new Date().toISOString() };
-          addEntry(entry, [entry, ...history].slice(0, 50));
-          setInputUrl('');
-        }, 100);
+      if (text && text.trim()) {
+        setInputUrl(text);
+        if (oneTapClean) {
+          setTimeout(() => {
+            const { cleaned, removed } = cleanUrlDetailed(text.trim(), aggressiveMode);
+            const entry = { id: Date.now(), original: text.trim(), cleaned, removed: removed || [], timestamp: new Date().toISOString() };
+            addEntry(entry, [entry, ...history].slice(0, 50));
+            setInputUrl('');
+          }, 100);
+        }
+      } else {
+        toast('Clipboard is empty');
       }
     } catch {
-      toast.error('Clipboard access denied');
+      toast.error("Can't read clipboard here — long-press the field to paste");
+      inputRef.current?.focus();
     }
   };
 
@@ -110,6 +116,7 @@ export default function HomeTab({ history, saveHistory, autoCopy, oneTapClean, a
         <div className={`flex items-center gap-3 ${cardInner} border ${borderInput} rounded-xl px-4 py-3 mb-4 focus-within:border-violet-500 transition-colors`}>
           <Link2 className={`w-5 h-5 shrink-0 ${d ? 'text-violet-400' : 'text-violet-500'}`} />
           <input
+            ref={inputRef}
             type="url"
             value={inputUrl}
             onChange={(e) => setInputUrl(e.target.value)}
