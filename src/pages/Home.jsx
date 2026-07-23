@@ -148,7 +148,7 @@ export default function HomePage() {
       </div>
 
       {/* Always-mounted tabs — hidden via CSS to preserve scroll position and state */}
-      <div className="flex-1 relative overflow-hidden" style={{ paddingBottom: 'calc(4.5rem + env(safe-area-inset-bottom))' }}>
+      <div className="flex-1 relative overflow-hidden">
         {/* Route redirect handler */}
         <Routes>
           <Route index element={<Navigate to="/home" replace />} />
@@ -186,7 +186,7 @@ export default function HomePage() {
               animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : (location.pathname > path ? -20 : 20) }}
               transition={{ duration: 0.18, ease: 'easeInOut' }}
               className="absolute inset-0 overflow-y-auto"
-              style={{ pointerEvents: isActive ? 'auto' : 'none', visibility: isActive ? 'visible' : 'hidden' }}
+              style={{ bottom: 'calc(4.5rem + env(safe-area-inset-bottom))', pointerEvents: isActive ? 'auto' : 'none', visibility: isActive ? 'visible' : 'hidden' }}
             >
               {el}
             </motion.div>
