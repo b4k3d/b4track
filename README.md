@@ -1,10 +1,33 @@
-# <picture><img src="public/icon-512.png" alt="logo" width="56" height="56" align="center" /></picture> B4TRACK
+<p align="center">
+  <img src="https://raw.githubusercontent.com/b4k3d/b4track/main/public/icon-512.png" alt="B4TRACK" width="120" height="120" />
+</p>
 
-> Strip tracking parameters from any link — clean, private, open source.
+<h1 align="center">B4TRACK</h1>
+
+<p align="center">
+  <em>Strip tracking parameters from any link — clean, private, open source.</em>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-a855f7?style=flat-square" /></a>
+  <img alt="PWA" src="https://img.shields.io/badge/PWA-installable-06b6d4?style=flat-square&logo=pwa&logoColor=white" />
+  <img alt="Android" src="https://img.shields.io/badge/Android-Google%20Play-22c55e?style=flat-square&logo=android&logoColor=white" />
+  <img alt="React 18" src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=white" />
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind-CSS-38bdf8?style=flat-square&logo=tailwindcss&logoColor=white" />
+  <img alt="On-device" src="https://img.shields.io/badge/Data-Never%20leaves%20device-8b5cf6?style=flat-square" />
+  <a href="https://github.com/b4k3d/b4track/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/b4k3d/b4track?style=flat-square&logo=github&color=8b5cf6" /></a>
+  <a href="https://buymeacoffee.com/b4k3d"><img alt="Buy me a coffee" src="https://img.shields.io/badge/☕-Buy%20me%20a%20coffee-FFDD00?style=flat-square" /></a>
+</p>
+
+<p align="center">
+  <a href="#--features">Features</a> ·
+  <a href="#-get-the-app">Get the app</a> ·
+  <a href="#-run-it-locally">Run locally</a> ·
+  <a href="#-privacy">Privacy</a> ·
+  <a href="#-license">License</a>
+</p>
 
 B4TRACK is a privacy-first PWA that removes tracking parameters (`utm_*`, `gclid`, `fbclid`, YouTube `si`, `igshid`, and 100+ more) from URLs so the links you share can't be traced back to you. Everything runs **on-device** — no servers, no analytics, no data collection. Paste a link, get a clean one, share it.
-
-Built on · React + Tailwind CSS · 
 
 ---
 
