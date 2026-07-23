@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Clock } from 'lucide-react';
 import { getTheme } from '@/lib/themeClasses';
+import { writeClipboardText } from '@/lib/clipboard';
 import { toast } from 'sonner';
 import HistoryCard from '@/components/HistoryCard';
 import PullToRefresh from '@/components/PullToRefresh';
@@ -12,7 +13,7 @@ export default function HistoryTab({ history, saveHistory, darkMode }) {
   const totalTrackersDodged = history.reduce((sum, i) => sum + (i.removed?.length || 0), 0);
 
   const copyToClipboard = (text, id) => {
-    navigator.clipboard.writeText(text).then(() => {
+    writeClipboardText(text).then(() => {
       setCopiedId(id);
       toast.success('Copied!');
       setTimeout(() => setCopiedId(null), 2000);

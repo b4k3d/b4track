@@ -1,5 +1,6 @@
 import { Copy, Share2, CheckCheck, X, Shield } from 'lucide-react';
 import { useState } from 'react';
+import { writeClipboardText } from '@/lib/clipboard';
 
 export default function CleanResultModal({ result, onClose }) {
   const [copied, setCopied] = useState(false);
@@ -14,7 +15,7 @@ export default function CleanResultModal({ result, onClose }) {
     const text = result.entries.length === 1
       ? result.entries[0].cleaned
       : result.entries.map((e) => e.cleaned).join('\n');
-    navigator.clipboard.writeText(text).then(() => {
+    writeClipboardText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });

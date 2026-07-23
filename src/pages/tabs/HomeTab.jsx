@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link2, Sparkles, ShieldCheck } from 'lucide-react';
 import { cleanUrlDetailed, extractUrls } from '@/lib/urlCleaner';
 import { getTheme } from '@/lib/themeClasses';
+import { readClipboardText, writeClipboardText } from '@/lib/clipboard';
 import { toast } from 'sonner';
 import HistoryCard from '@/components/HistoryCard';
 import CleanResultModal from '@/components/CleanResultModal';
@@ -18,7 +19,7 @@ export default function HomeTab({ history, saveHistory, autoCopy, oneTapClean, a
 
   const addEntry = (entry, newHistory) => {
     saveHistory(newHistory);
-    if (autoCopy) navigator.clipboard.writeText(entry.cleaned).catch(() => {});
+    if (autoCopy) writeClipboardText(entry.cleaned);
     setModalResult({ type: 'single', entries: [entry] });
   };
 
@@ -32,7 +33,7 @@ export default function HomeTab({ history, saveHistory, autoCopy, oneTapClean, a
 
   const handlePaste = async () => {
     try {
-      const text = await navigator.clipboard.readText();
+      const text = await readClipboardText();
       setInputUrl(text);
       if (oneTapClean && text.trim()) {
         setTimeout(() => {
@@ -49,7 +50,7 @@ export default function HomeTab({ history, saveHistory, autoCopy, oneTapClean, a
 
   const handleSanitizeClipboard = async () => {
     let text;
-    try { text = await navigator.clipboard.readText(); }
+    try { text = await readClipboardText(); }
     catch { toast.error('Clipboard access denied'); return; }
     const urls = extractUrls(text);
     if (urls.length === 0) { toast.error('No URLs found in clipboard'); return; }
@@ -59,13 +60,13 @@ export default function HomeTab({ history, saveHistory, autoCopy, oneTapClean, a
     });
     let cleanedText = text;
     entries.forEach((e) => { cleanedText = cleanedText.replace(e.original, e.cleaned); });
-    navigator.clipboard.writeText(cleanedText).catch(() => {});
+    writeClipboardText(cleanedText);
     saveHistory([...entries, ...history].slice(0, 50));
     setModalResult({ type: 'clipboard', entries });
   };
 
   const copyToClipboard = (text, id) => {
-    navigator.clipboard.writeText(text).then(() => {
+    writeClipboardText(text).then(() => {
       setCopiedId(id);
       toast.success('Copied!');
       setTimeout(() => setCopiedId(null), 2000);
