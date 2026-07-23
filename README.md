@@ -4,7 +4,7 @@
 
 B4TRACK is a privacy-first PWA that removes tracking parameters (`utm_*`, `gclid`, `fbclid`, YouTube `si`, `igshid`, and 100+ more) from URLs so the links you share can't be traced back to you. Everything runs **on-device** — no servers, no analytics, no data collection. Paste a link, get a clean one, share it.
 
-Built on [Base44](https://base44.com) · React + Tailwind CSS · Packaged as an installable Android app via an AAB.
+Built on · React + Tailwind CSS · 
 
 ---
 
