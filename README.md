@@ -119,6 +119,6 @@ If B4TRACK saved you some trackers, consider [buying me a coffee](https://buymea
 
 ## 🙏 Acknowledgements
 
-- [Base44](https://base44.com) — the platform this app is built and published with.
-- [Untracker](https://github.com/zhanghai/Untracker) — inspiration for the parameter blocklist.
+
+- [Untracker](https://github.com/zhanghai/Untracker) — inspiration
 - All the open trackers-of-the-world, for giving us something to clean.
