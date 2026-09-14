@@ -62,3 +62,16 @@ Requirements:
 git clone https://github.com/b4k3d/b4track.git
 cd b4track
 ./gradlew assembleStandardDebug
+Privacy
+B4TRACK is designed to clean links on-device.
+
+Read the full privacy policy in PRIVACY.md.
+
+License
+B4TRACK is released under the Apache License 2.0.
+
+
+Support
+If B4TRACK is useful, you can support development by buying me a coffee:
+
+https://buymeacoffee.com/b4k3d
