@@ -48,7 +48,7 @@ https://b4track.app/
 
 Download the latest Android APK:
 
-[Download B4TRACK v1.0.0](https://zo.pub/b4k3d/b4track-release-1-0-0/B4TRACK-v1.0.0.apk)
+[Download B4TRACK v1.0.0]()
 
 ## Build Locally
 
