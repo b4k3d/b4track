@@ -15,10 +15,7 @@
 </p>
 
 
-  </a>
-  <a href="LICENSE">
-    <img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="Apache 2.0 License" />
-  </a>
+  
   <a href="https://b4track.app/">
     <img src="https://img.shields.io/badge/web-b4track.app-111827" alt="B4TRACK Website" />
   </a>
