@@ -1,7 +1,7 @@
 # B4TRACK
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/b4k3d/b4track/main/public/icon-512.png" alt="B4TRACK" width="120" height="120" />
+  <img src="[https://raw.githubusercontent.com/b4k3d/b4track/c3e1eb1e641b9af6edcc8f8e79e43e7c5baeaa9e/icon-512%20(1).png}" alt="B4TRACK" width="120" height="120" />
 </p>
 
 <p align="center">
