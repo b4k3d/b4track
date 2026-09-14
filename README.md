@@ -14,9 +14,7 @@
   <a href="https://buymeacoffee.com/b4k3d">☕ Support the project</a>
 </p>
 
-<p align="center">
-  <a href="https://github.com/b4k3d/b4track/actions/workflows/android.yml">
-    <img src="https://github.com/b4k3d/b4track/actions/workflows/android.yml/badge.svg" alt="Android CI" />
+
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="Apache 2.0 License" />
