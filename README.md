@@ -1,7 +1,7 @@
 # 🛡️ B4TRACK
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/b4k3d/b4track/c3e1eb1e641b9af6edcc8f8e79e43e7c5baeaa9e/icon-512%20(1).png" alt="B4TRACK" width="120" height="120" />
+  <img src="https://zo.pub/b4k3d/b4track-readme-assets/icon-512.png" alt="B4TRACK" width="120" height="120" />
 </p>
 
 <p align="center">
@@ -99,3 +99,6 @@ The Android cleaner is based on the open-source [Untracker](https://github.com/z
 If B4TRACK is useful, support development by buying me a coffee:
 
 👉 https://buymeacoffee.com/b4k3d
+
+🪙 Support with Monero
+4Ab4k3dMzytarjaM55iyaLNCPUE5TcDmgMTkQknM5KSPaKoU7gN7qVcLAeQcQXoGkWXvPp14Edve44THvBhCEvr3C9H1mvo
