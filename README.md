@@ -96,4 +96,5 @@ If B4TRACK is useful, support development by buying me a coffee:
 👉 https://buymeacoffee.com/b4k3d
 
 🪙 Support with Monero
+
 4Ab4k3dMzytarjaM55iyaLNCPUE5TcDmgMTkQknM5KSPaKoU7gN7qVcLAeQcQXoGkWXvPp14Edve44THvBhCEvr3C9H1mvo
